@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subway_BI Авторизация</title>
+    <title>Subjoy_BI Авторизация</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -176,7 +176,7 @@
             </div>
         </div>
         
-        <div class="form-section">
+        <div class="form-section" style="display: none;">
             <h3>🔑 Вторая авторизация</h3>
             <div class="form-group">
                 <label for="login2">Логин:</label>
@@ -190,7 +190,7 @@
         
         <div class="button-group">
             <button class="auto-fill-btn" onclick="autoFill()">
-                🤖 Заполнить автоматически
+                🧩 Заполнить логин и пароль
             </button>
             <button class="submit-btn" onclick="submitAuth()">
                 🚀 Авторизоваться
@@ -216,8 +216,8 @@
             // Заполняем поля автоматически
             document.getElementById('login1').value = 'test_mobile';
             document.getElementById('password1').value = 'test_m';
-            document.getElementById('login2').value = 'admin';
-            document.getElementById('password2').value = '2221868';
+            document.getElementById('login2').value = 'test_mobile';
+            document.getElementById('password2').value = 'test_m';
             
             showStatus('✅ Данные заполнены автоматически!', 'success');
         }
@@ -228,8 +228,8 @@
             const login2 = document.getElementById('login2').value.trim();
             const password2 = document.getElementById('password2').value.trim();
             
-            // Проверяем, что все поля заполнены
-            if (!login1 || !password1 || !login2 || !password2) {
+            // Проверяем, что заполнена первая пара полей
+            if (!login1 || !password1) {
                 showStatus('❌ Заполните все поля!', 'error');
                 return;
             }
@@ -291,4 +291,3 @@
     </script>
 </body>
 </html>
-
