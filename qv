@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Авторизация QlikView</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #ffffff;
+            color: #000000;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Авторизация</h1>
+        <div id="status" class="status">Идет авторизация...</div>
+    </div>
+
+    <script>
+        // Логин и пароль для автоматической подстановки
+        const LOGIN = 'test_mobile';
+        const PASSWORD = 'test_m';
+        const FORM_LOGIN_URL = 'https://report.subjoy.ru/qlikview/FormLogin.htm';
+        
+        function autoLogin() {
+            try {
+                // Получаем URL из параметра url
+                const params = new URLSearchParams(window.location.search);
+                const targetUrl = params.get('url') || params.get('back');
+                
+                if (!targetUrl) {
+                    document.getElementById('status').textContent = '❌ Ошибка: не указан URL для перенаправления.';
+                    document.getElementById('status').style.background = '#ffebee';
+                    document.getElementById('status').style.color = '#c62828';
+                    return;
+                }
+                
+                // Декодируем URL, если он был закодирован
+                const decodedUrl = decodeURIComponent(targetUrl);
+                
+                // Создаем скрытую форму для автоматической отправки POST-запроса
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = FORM_LOGIN_URL;
+                form.style.display = 'none';
+                
+                // Добавляем поле back с целевым URL
+                const backInput = document.createElement('input');
+                backInput.type = 'hidden';
+                backInput.name = 'back';
+                backInput.value = decodedUrl;
+                form.appendChild(backInput);
+                
+                // Добавляем логин (пробуем разные возможные имена полей)
+                const usernameInput = document.createElement('input');
+                usernameInput.type = 'text';
+                usernameInput.name = 'username'; // Стандартное имя для QlikView
+                usernameInput.value = LOGIN;
+                form.appendChild(usernameInput);
+                
+                // Альтернативное имя поля
+                const userInput = document.createElement('input');
+                userInput.type = 'text';
+                userInput.name = 'user';
+                userInput.value = LOGIN;
+                form.appendChild(userInput);
+                
+                // Добавляем пароль
+                const passwordInput = document.createElement('input');
+                passwordInput.type = 'password';
+                passwordInput.name = 'password'; // Стандартное имя для QlikView
+                passwordInput.value = PASSWORD;
+                form.appendChild(passwordInput);
+                
+                // Альтернативное имя поля
+                const pwdInput = document.createElement('input');
+                pwdInput.type = 'password';
+                pwdInput.name = 'pwd';
+                pwdInput.value = PASSWORD;
+                form.appendChild(pwdInput);
+                
+                // Добавляем форму в документ
+                document.body.appendChild(form);
+                
+                // Отправляем форму автоматически
+                setTimeout(() => {
+                    form.submit();
+                }, 300);
+                
+            } catch (e) {
+                document.getElementById('status').textContent = `❌ Ошибка: ${e.message}`;
+                document.getElementById('status').style.background = '#ffebee';
+                document.getElementById('status').style.color = '#c62828';
+            }
+        }
+        
+        // Запускаем авторизацию при загрузке страницы
+        window.addEventListener('load', function() {
+            autoLogin();
+        });
+    </script>
+</body>
+</html>
+
