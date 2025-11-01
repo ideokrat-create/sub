@@ -63,105 +63,64 @@
                 // Декодируем URL, если он был закодирован
                 const decodedUrl = decodeURIComponent(targetUrl);
                 
-                // Используем fetch API вместо form.submit() для избежания ERR_HTTP2_PROTOCOL_ERROR
-                // Создаем FormData для отправки POST запроса
-                const formData = new FormData();
-                formData.append('back', decodedUrl);
-                formData.append('username', LOGIN);
-                formData.append('password', PASSWORD);
-                // Также добавляем альтернативные имена полей на случай, если они нужны
-                formData.append('user', LOGIN);
-                formData.append('pwd', PASSWORD);
-                
-                // Отправляем POST запрос через fetch API для избежания проблем с HTTP/2
-                setTimeout(async () => {
+                // Используем прямую отправку формы через POST с правильным форматированием данных
+                // QlikView FormLogin ожидает стандартную HTML форму с полями username и password
+                setTimeout(() => {
                     try {
-                        // Отправляем POST запрос
-                        const response = await fetch(FORM_LOGIN_URL, {
-                            method: 'POST',
-                            body: formData,
-                            credentials: 'include',
-                            redirect: 'follow',
-                            mode: 'cors'
-                        });
-                        
-                        // После успешной отправки перенаправляем на ответ сервера
-                        // Если сервер вернул редирект, он будет автоматически обработан
-                        if (response.ok || response.redirected) {
-                            window.location.href = response.url || decodedUrl;
-                        } else {
-                            // Если fetch не сработал из-за CORS, используем fallback метод
-                            submitFormFallback(decodedUrl);
-                        }
-                    } catch (error) {
-                        console.error('Ошибка при отправке через fetch:', error);
-                        // Если fetch не работает, используем fallback метод с iframe
-                        submitFormFallback(decodedUrl);
-                    }
-                }, 1500);
-                
-                // Fallback метод: создание формы и отправка через iframe для обхода HTTP/2 проблем
-                function submitFormFallback(decodedUrl) {
-                    try {
+                        // Создаем форму для отправки POST запроса
                         const form = document.createElement('form');
                         form.method = 'POST';
                         form.action = FORM_LOGIN_URL;
                         form.style.display = 'none';
+                        form.enctype = 'application/x-www-form-urlencoded';
+                        form.target = '_self';
+                        form.acceptCharset = 'UTF-8';
                         
-                        // Создаем iframe для отправки формы
-                        const iframe = document.createElement('iframe');
-                        iframe.name = 'formTarget';
-                        iframe.style.display = 'none';
-                        document.body.appendChild(iframe);
-                        
-                        form.target = 'formTarget';
-                        
+                        // Добавляем поле back (обязательное для редиректа после авторизации)
                         const backInput = document.createElement('input');
                         backInput.type = 'hidden';
                         backInput.name = 'back';
                         backInput.value = decodedUrl;
                         form.appendChild(backInput);
                         
+                        // Добавляем поле username (id="username" name="username")
                         const usernameInput = document.createElement('input');
                         usernameInput.type = 'text';
                         usernameInput.name = 'username';
+                        usernameInput.id = 'username';
                         usernameInput.value = LOGIN;
                         form.appendChild(usernameInput);
                         
-                        const userInput = document.createElement('input');
-                        userInput.type = 'text';
-                        userInput.name = 'user';
-                        userInput.value = LOGIN;
-                        form.appendChild(userInput);
-                        
+                        // Добавляем поле password (id="password" name="password")
                         const passwordInput = document.createElement('input');
                         passwordInput.type = 'password';
                         passwordInput.name = 'password';
+                        passwordInput.id = 'password';
                         passwordInput.value = PASSWORD;
+                        passwordInput.autocomplete = 'off';
                         form.appendChild(passwordInput);
                         
-                        const pwdInput = document.createElement('input');
-                        pwdInput.type = 'password';
-                        pwdInput.name = 'pwd';
-                        pwdInput.value = PASSWORD;
-                        form.appendChild(pwdInput);
-                        
+                        // Добавляем форму в DOM перед отправкой
                         document.body.appendChild(form);
+                        
+                        // Выводим отладочную информацию
+                        console.log('Отправка формы с данными:', {
+                            username: LOGIN,
+                            password: '***',
+                            back: decodedUrl,
+                            formAction: form.action,
+                            formMethod: form.method
+                        });
                         
                         // Отправляем форму
                         form.submit();
-                        
-                        // После небольшой задержки перенаправляем на целевой URL
-                        setTimeout(() => {
-                            window.location.href = decodedUrl;
-                        }, 2000);
                     } catch (error) {
-                        console.error('Ошибка при отправке формы fallback:', error);
+                        console.error('Ошибка при отправке формы:', error);
                         document.getElementById('status').textContent = `❌ Ошибка отправки формы: ${error.message}. Проверьте сертификат сайта и попробуйте открыть ссылку вручную.`;
                         document.getElementById('status').style.background = '#ffebee';
                         document.getElementById('status').style.color = '#c62828';
                     }
-                }
+                }, 1500);
                 
             } catch (e) {
                 document.getElementById('status').textContent = `❌ Ошибка: ${e.message}`;
