@@ -68,6 +68,7 @@
                 form.method = 'POST';
                 form.action = FORM_LOGIN_URL;
                 form.style.display = 'none';
+                // Не указываем target, чтобы браузер правильно обработал переход и сертификат
                 
                 // Добавляем поле back с целевым URL
                 const backInput = document.createElement('input');
@@ -107,10 +108,18 @@
                 // Добавляем форму в документ
                 document.body.appendChild(form);
                 
-                // Отправляем форму автоматически
+                // Отправляем форму автоматически после задержки для правильной загрузки сертификата
+                // Увеличиваем задержку, чтобы браузер успел подготовить SSL-соединение
                 setTimeout(() => {
-                    form.submit();
-                }, 300);
+                    try {
+                        form.submit();
+                    } catch (error) {
+                        console.error('Ошибка при отправке формы:', error);
+                        document.getElementById('status').textContent = `❌ Ошибка отправки формы: ${error.message}. Проверьте сертификат сайта и попробуйте открыть ссылку вручную.`;
+                        document.getElementById('status').style.background = '#ffebee';
+                        document.getElementById('status').style.color = '#c62828';
+                    }
+                }, 800);
                 
             } catch (e) {
                 document.getElementById('status').textContent = `❌ Ошибка: ${e.message}`;
