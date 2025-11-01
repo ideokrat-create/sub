@@ -63,11 +63,105 @@
                 // Декодируем URL, если он был закодирован
                 const decodedUrl = decodeURIComponent(targetUrl);
                 
-                // Используем прямую отправку формы через POST с правильным форматированием данных
-                // QlikView FormLogin ожидает стандартную HTML форму с полями username и password
+                // Используем подход с iframe для загрузки FormLogin и заполнения формы через JavaScript
+                
+                // Создаем скрытый iframe для загрузки страницы FormLogin
+                const iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.style.width = '0';
+                iframe.style.height = '0';
+                iframe.style.border = 'none';
+                iframe.id = 'qlikviewLoginIframe';
+                document.body.appendChild(iframe);
+                
+                // Формируем URL для загрузки FormLogin с параметром back
+                const formLoginUrl = `${FORM_LOGIN_URL}?back=${encodeURIComponent(decodedUrl)}`;
+                
+                // Загружаем страницу FormLogin в iframe
+                iframe.src = formLoginUrl;
+                
                 setTimeout(() => {
                     try {
-                        // Создаем форму для отправки POST запроса
+                        // Пытаемся получить доступ к содержимому iframe и заполнить форму
+                        const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+                        
+                        if (iframeDoc) {
+                            // Ждем загрузки страницы
+                            const waitForForm = setInterval(() => {
+                                try {
+                                    const usernameField = iframeDoc.getElementById('username');
+                                    const passwordField = iframeDoc.getElementById('password');
+                                    const form = iframeDoc.querySelector('form');
+                                    
+                                    if (usernameField && passwordField && form) {
+                                        // Заполняем поля формы
+                                        usernameField.value = LOGIN;
+                                        passwordField.value = PASSWORD;
+                                        
+                                        // Триггерим события для правильной обработки
+                                        usernameField.dispatchEvent(new Event('input', { bubbles: true }));
+                                        usernameField.dispatchEvent(new Event('change', { bubbles: true }));
+                                        passwordField.dispatchEvent(new Event('input', { bubbles: true }));
+                                        passwordField.dispatchEvent(new Event('change', { bubbles: true }));
+                                        
+                                        // Проверяем/устанавливаем поле back
+                                        let backInput = form.querySelector('input[name="back"]');
+                                        if (!backInput) {
+                                            backInput = iframeDoc.createElement('input');
+                                            backInput.type = 'hidden';
+                                            backInput.name = 'back';
+                                            form.appendChild(backInput);
+                                        }
+                                        backInput.value = decodedUrl;
+                                        
+                                        clearInterval(waitForForm);
+                                        
+                                        // Отправляем форму в iframe
+                                        setTimeout(() => {
+                                            form.submit();
+                                            
+                                            // После отправки формы ждем редиректа и перенаправляем основное окно
+                                            setTimeout(() => {
+                                                try {
+                                                    const iframeWindow = iframe.contentWindow;
+                                                    if (iframeWindow && iframeWindow.location.href !== formLoginUrl) {
+                                                        // Если произошел редирект, перенаправляем основное окно
+                                                        window.location.href = iframeWindow.location.href;
+                                                    } else {
+                                                        // Если редирект не произошел, перенаправляем на back URL
+                                                        window.location.href = decodedUrl;
+                                                    }
+                                                } catch (e) {
+                                                    // Если не можем получить доступ к iframe (CORS), перенаправляем на back URL
+                                                    window.location.href = decodedUrl;
+                                                }
+                                            }, 2000);
+                                        }, 500);
+                                    }
+                                } catch (e) {
+                                    // Ошибка доступа к iframe (CORS) - используем fallback
+                                    if (e.name === 'SecurityError' || e.message.includes('cross-origin')) {
+                                        clearInterval(waitForForm);
+                                        submitFormDirectly(decodedUrl);
+                                    }
+                                }
+                            }, 200);
+                            
+                            // Таймаут если форма не найдена
+                            setTimeout(() => clearInterval(waitForForm), 10000);
+                        } else {
+                            // Если не можем получить доступ к iframe, используем fallback
+                            submitFormDirectly(decodedUrl);
+                        }
+                    } catch (error) {
+                        console.error('Ошибка при заполнении формы в iframe:', error);
+                        submitFormDirectly(decodedUrl);
+                    }
+                }, 2000);
+                
+                // Fallback метод: прямая отправка формы через POST
+                function submitFormDirectly(decodedUrl) {
+                    try {
                         const form = document.createElement('form');
                         form.method = 'POST';
                         form.action = FORM_LOGIN_URL;
@@ -76,14 +170,12 @@
                         form.target = '_self';
                         form.acceptCharset = 'UTF-8';
                         
-                        // Добавляем поле back (обязательное для редиректа после авторизации)
                         const backInput = document.createElement('input');
                         backInput.type = 'hidden';
                         backInput.name = 'back';
                         backInput.value = decodedUrl;
                         form.appendChild(backInput);
                         
-                        // Добавляем поле username (id="username" name="username")
                         const usernameInput = document.createElement('input');
                         usernameInput.type = 'text';
                         usernameInput.name = 'username';
@@ -91,7 +183,6 @@
                         usernameInput.value = LOGIN;
                         form.appendChild(usernameInput);
                         
-                        // Добавляем поле password (id="password" name="password")
                         const passwordInput = document.createElement('input');
                         passwordInput.type = 'password';
                         passwordInput.name = 'password';
@@ -100,19 +191,7 @@
                         passwordInput.autocomplete = 'off';
                         form.appendChild(passwordInput);
                         
-                        // Добавляем форму в DOM перед отправкой
                         document.body.appendChild(form);
-                        
-                        // Выводим отладочную информацию
-                        console.log('Отправка формы с данными:', {
-                            username: LOGIN,
-                            password: '***',
-                            back: decodedUrl,
-                            formAction: form.action,
-                            formMethod: form.method
-                        });
-                        
-                        // Отправляем форму
                         form.submit();
                     } catch (error) {
                         console.error('Ошибка при отправке формы:', error);
@@ -120,7 +199,7 @@
                         document.getElementById('status').style.background = '#ffebee';
                         document.getElementById('status').style.color = '#c62828';
                     }
-                }, 1500);
+                }
                 
             } catch (e) {
                 document.getElementById('status').textContent = `❌ Ошибка: ${e.message}`;
