@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subway_BI Авторизация</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Авторизация QlikView</title>
     <style>
         * {
             margin: 0;
@@ -14,335 +13,117 @@
         
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
+            background: #ffffff;
+            color: #000000;
             padding: 20px;
-            line-height: 1.6;
+            text-align: center;
         }
         
         .container {
             max-width: 400px;
             margin: 0 auto;
-        }
-        
-        h1 {
-            text-align: center;
-            margin-bottom: 30px;
-            color: var(--tg-theme-text-color, #000000);
-        }
-        
-        .form-section {
-            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
-            border-radius: 12px;
             padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-        }
-        
-        .form-section h3 {
-            margin-bottom: 15px;
-            color: var(--tg-theme-text-color, #000000);
-            font-size: 16px;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: 500;
-            color: var(--tg-theme-text-color, #000000);
-            font-size: 14px;
-        }
-        
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid var(--tg-theme-hint-color, #e0e0e0);
-            border-radius: 8px;
-            font-size: 16px;
-            background: var(--tg-theme-bg-color, #ffffff);
-            color: var(--tg-theme-text-color, #000000);
-            transition: border-color 0.3s ease;
-        }
-        
-        input[type="text"]:focus, input[type="password"]:focus {
-            outline: none;
-            border-color: var(--tg-theme-button-color, #0088cc);
-            box-shadow: 0 0 0 2px rgba(0, 136, 204, 0.2);
-        }
-        
-        .button-group {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        
-        button {
-            flex: 1;
-            padding: 12px 16px;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-height: 48px;
-        }
-        
-        .auto-fill-btn {
-            background: var(--tg-theme-button-color, #0088cc);
-            color: var(--tg-theme-button-text-color, #ffffff);
-        }
-        
-        .auto-fill-btn:hover {
-            opacity: 0.9;
-            transform: translateY(-1px);
-        }
-        
-        .submit-btn {
-            background: #28a745;
-            color: white;
-        }
-        
-        .submit-btn:hover {
-            background: #218838;
-            transform: translateY(-1px);
-        }
-        
-        .info-text {
-            background: var(--tg-theme-secondary-bg-color, #f8f9fa);
-            border-left: 4px solid var(--tg-theme-button-color, #0088cc);
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 0 8px 8px 0;
-            font-size: 14px;
-            color: var(--tg-theme-text-color, #000000);
         }
         
         .status {
-            text-align: center;
-            margin-top: 15px;
-            padding: 10px;
+            padding: 15px;
             border-radius: 8px;
-            font-weight: 500;
-        }
-        
-        .status.success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .status.error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-        
-        @media (max-width: 480px) {
-            body {
-                padding: 15px;
-            }
-            
-            .button-group {
-                flex-direction: column;
-            }
+            margin: 20px 0;
+            font-size: 14px;
+            background: #e3f2fd;
+            color: #1976d2;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>📊 Subway_BI</h1>
-        
-        <div class="info-text">
-            <strong>Инструкция:</strong><br>
-            1. Нажмите "🤖 Заполнить автоматически"<br>
-            2. Проверьте данные<br>
-            3. Нажмите "🚀 Авторизоваться"
-        </div>
-        
-        <div class="form-section">
-            <h3>🔑 Первая авторизация</h3>
-            <div class="form-group">
-                <label for="login1">Логин:</label>
-                <input type="text" id="login1" placeholder="Введите логин">
-            </div>
-            <div class="form-group">
-                <label for="password1">Пароль:</label>
-                <input type="password" id="password1" placeholder="Введите пароль">
-            </div>
-        </div>
-        
-        <div class="form-section" style="display: none;">
-            <h3>🔑 Вторая авторизация</h3>
-            <div class="form-group">
-                <label for="login2">Логин:</label>
-                <input type="text" id="login2" placeholder="Введите логин">
-            </div>
-            <div class="form-group">
-                <label for="password2">Пароль:</label>
-                <input type="password" id="password2" placeholder="Введите пароль">
-            </div>
-        </div>
-        
-        <div class="button-group">
-            <button class="auto-fill-btn" onclick="autoFill()">
-                🧩 Заполнить логин и пароль
-            </button>
-            <button class="submit-btn" onclick="submitAuth()">
-                🚀 Авторизоваться
-            </button>
-        </div>
-        
-        <div id="status" class="status" style="display: none;"></div>
+        <h1>🔐 Авторизация</h1>
+        <div id="status" class="status">Идет авторизация...</div>
     </div>
 
     <script>
-        // Инициализация Telegram Web App
-        let tg = window.Telegram.WebApp;
+        // Логин и пароль для автоматической подстановки
+        const LOGIN = 'test_mobile';
+        const PASSWORD = 'test_m';
+        const FORM_LOGIN_URL = 'https://report.subjoy.ru/qlikview/FormLogin.htm';
         
-        // Настройка Web App
-        tg.ready();
-        tg.expand();
-        
-        // Устанавливаем тему
-        document.body.style.backgroundColor = tg.themeParams.bg_color || '#ffffff';
-        document.body.style.color = tg.themeParams.text_color || '#000000';
-        
-        function autoFill() {
-            // Заполняем поля автоматически
-            document.getElementById('login1').value = 'test_mobile';
-            document.getElementById('password1').value = 'test_m';
-            document.getElementById('login2').value = 'test_mobile';
-            document.getElementById('password2').value = 'test_m';
-            
-            showStatus('✅ Данные заполнены автоматически!', 'success');
-        }
-        
-        function submitAuth() {
-            const login1 = document.getElementById('login1').value.trim();
-            const password1 = document.getElementById('password1').value.trim();
-            const login2 = document.getElementById('login2').value.trim();
-            const password2 = document.getElementById('password2').value.trim();
-            
-            // Проверяем, что заполнена первая пара полей
-            if (!login1 || !password1) {
-                showStatus('❌ Заполните все поля!', 'error');
-                return;
-            }
-            
-            // Подготавливаем данные для отправки в бот
-            const authData = {
-                action: 'analytics_auth',
-                login1: login1,
-                password1: password1,
-                login2: login2,
-                password2: password2,
-                timestamp: new Date().toISOString()
-            };
-            
-            showStatus('🔄 Отправка данных в бот...', 'success');
-
-            // Отправляем данные в бот
-            tg.sendData(JSON.stringify(authData));
-
-            // Готовим автоматическую авторизацию на QlikView через POST-запрос
+        function autoLogin() {
             try {
+                // Получаем URL из параметра url
                 const params = new URLSearchParams(window.location.search);
-                const phone = (params.get('phone') || '').trim();
-                const target = (params.get('target') || 'opendoc').trim();
+                const targetUrl = params.get('url') || params.get('back');
                 
-                let backUrl;
-                
-                if (target === 'opendoc') {
-                    // Для opendoc: формируем URL опендока
-                    if (phone) {
-                        const documentParam = `mobile\\mobile ${phone}.qvw`;
-                        backUrl = `/QvAJAXZfc/opendoc.htm?document=${encodeURIComponent(documentParam)}&lang=en-US&host=QVS%40win-tk00vtlfbr6`;
-                    } else {
-                        backUrl = `/QvAJAXZfc/opendoc.htm?document=mobile%5Cmobile.qvw&lang=en-US&host=QVS%40win-tk00vtlfbr6`;
-                    }
-                } else {
-                    // Для других целей используем стандартный back-параметр
-                    backUrl = `/QvAJAXZfc/AccessPoint.aspx?open=&id=QVS%40win-tk00vtlfbr6%7CMOBILE%2Fmobile%20${encodeURIComponent(phone)}.qvw&lang=en-US&client=Ajax`;
+                if (!targetUrl) {
+                    document.getElementById('status').textContent = '❌ Ошибка: не указан URL для перенаправления.';
+                    document.getElementById('status').style.background = '#ffebee';
+                    document.getElementById('status').style.color = '#c62828';
+                    return;
                 }
-
+                
+                // Декодируем URL, если он был закодирован
+                const decodedUrl = decodeURIComponent(targetUrl);
+                
                 // Создаем скрытую форму для автоматической отправки POST-запроса
                 const form = document.createElement('form');
                 form.method = 'POST';
-                form.action = 'https://report.subjoy.ru/qlikview/FormLogin.htm';
+                form.action = FORM_LOGIN_URL;
                 form.style.display = 'none';
-                form.target = '_self';
                 
-                // Добавляем поле back
+                // Добавляем поле back с целевым URL
                 const backInput = document.createElement('input');
                 backInput.type = 'hidden';
                 backInput.name = 'back';
-                backInput.value = backUrl;
+                backInput.value = decodedUrl;
                 form.appendChild(backInput);
                 
                 // Добавляем логин (пробуем разные возможные имена полей)
-                const loginInput = document.createElement('input');
-                loginInput.type = 'text';
-                loginInput.name = 'username'; // Стандартное имя для QlikView
-                loginInput.value = login1; // Используем логин из формы
-                form.appendChild(loginInput);
+                const usernameInput = document.createElement('input');
+                usernameInput.type = 'text';
+                usernameInput.name = 'username'; // Стандартное имя для QlikView
+                usernameInput.value = LOGIN;
+                form.appendChild(usernameInput);
+                
+                // Альтернативное имя поля
+                const userInput = document.createElement('input');
+                userInput.type = 'text';
+                userInput.name = 'user';
+                userInput.value = LOGIN;
+                form.appendChild(userInput);
                 
                 // Добавляем пароль
                 const passwordInput = document.createElement('input');
                 passwordInput.type = 'password';
                 passwordInput.name = 'password'; // Стандартное имя для QlikView
-                passwordInput.value = password1; // Используем пароль из формы
+                passwordInput.value = PASSWORD;
                 form.appendChild(passwordInput);
                 
-                // Добавляем форму в документ и отправляем
+                // Альтернативное имя поля
+                const pwdInput = document.createElement('input');
+                pwdInput.type = 'password';
+                pwdInput.name = 'pwd';
+                pwdInput.value = PASSWORD;
+                form.appendChild(pwdInput);
+                
+                // Добавляем форму в документ
                 document.body.appendChild(form);
                 
-                showStatus('🔄 Автоматическая авторизация...', 'success');
-                
-                // Отправляем форму после небольшой задержки
+                // Отправляем форму автоматически
                 setTimeout(() => {
                     form.submit();
-                }, 500);
+                }, 300);
                 
             } catch (e) {
-                // В случае ошибки просто показываем уведомление
-                showStatus(`❌ Ошибка авторизации: ${e.message}`, 'error');
+                document.getElementById('status').textContent = `❌ Ошибка: ${e.message}`;
+                document.getElementById('status').style.background = '#ffebee';
+                document.getElementById('status').style.color = '#c62828';
             }
         }
         
-        function showStatus(message, type) {
-            const statusDiv = document.getElementById('status');
-            statusDiv.textContent = message;
-            statusDiv.className = `status ${type}`;
-            statusDiv.style.display = 'block';
-            
-            // Скрываем статус через 3 секунды (кроме финального сообщения)
-            if (!message.includes('Закрытие')) {
-                setTimeout(() => {
-                    statusDiv.style.display = 'none';
-                }, 3000);
-            }
-        }
-        
-        // Обработка нажатий Enter в полях ввода
-        document.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const activeElement = document.activeElement;
-                if (activeElement.tagName === 'INPUT') {
-                    e.preventDefault();
-                    submitAuth();
-                }
-            }
-        });
-        
-        // Автозаполнение при загрузке страницы
+        // Запускаем авторизацию при загрузке страницы
         window.addEventListener('load', function() {
-            autoFill();
+            autoLogin();
         });
     </script>
 </body>
 </html>
+
